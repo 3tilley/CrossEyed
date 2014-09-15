@@ -253,7 +253,7 @@
 
 .crossword #clues label.complete 
 {
-	color: gray !important;
+    text-decoration: line-through;
 }
 
 .crossword div.active 
