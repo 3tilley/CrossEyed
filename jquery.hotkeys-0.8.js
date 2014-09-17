@@ -420,6 +420,25 @@ function check(inputs) {
 	}
 }
 
+//use "http://www.datatables.org/data/htmlstring.xml" as html.tostring; select * from html.tostring where url = "http://www.theguardian.com/crosswords/quick/13840" and xpath="//div[@class='crossword']"
+
+function getCrossword(id) {
+    var data = ""
+    var quickUrl = "http://www.theguardian.com/crosswords/quick/";
+    jQ.get("https://query.yahooapis.com/v1/public/yql?q=use%20%22http%3A%2F%2Fwww.datatables.org%2Fdata%2Fhtmlstring.xml%22%20as%20html.tostring%3B%20select%20*%20from%20html.tostring%20where%20url%20%3D%20%22http%3A%2F%2Fwww.theguardian.com%2Fcrosswords%2Fquick%2F13840%22%20and%20xpath%3D%22%2F%2Fdiv%5B%40class%3D'crossword'%5D%22&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=",
+        function (response, status, xhr) {
+            data = response.query.results.result;
+            console.log(status);
+            console.log(response);
+            jQ("#box").children().replaceWith(data);
+        });
+}
+
+
+jQ(function () {
+    getCrossword(13840)
+});
+
 /* m-141~js/jquery.cookie.js */
 /**
  * Cookie plugin
