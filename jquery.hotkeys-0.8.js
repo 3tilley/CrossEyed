@@ -3,6 +3,7 @@ var jQ = jQuery.noConflict();
 
 jQ('ready', crossword_init);
 jQ('ready', load_from_cookie);
+jQ('ready', bindSubmit);
 
 var focus_event_fired_during_click = false;
 var active_words = [];
@@ -425,19 +426,28 @@ function check(inputs) {
 function getCrossword(id) {
     var data = ""
     var quickUrl = "http://www.theguardian.com/crosswords/quick/";
-    jQ.get("https://query.yahooapis.com/v1/public/yql?q=use%20%22http%3A%2F%2Fwww.datatables.org%2Fdata%2Fhtmlstring.xml%22%20as%20html.tostring%3B%20select%20*%20from%20html.tostring%20where%20url%20%3D%20%22http%3A%2F%2Fwww.theguardian.com%2Fcrosswords%2Fquick%2F13840%22%20and%20xpath%3D%22%2F%2Fdiv%5B%40class%3D'crossword'%5D%22&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=",
+    jQ.get("https://query.yahooapis.com/v1/public/yql?q=use%20%22http%3A%2F%2Fwww.datatables.org%2Fdata%2Fhtmlstring.xml%22%20as%20html.tostring%3B%20select%20*%20from%20html.tostring%20where%20url%20%3D%20%22http%3A%2F%2Fwww.theguardian.com%2Fcrosswords%2Fquick%2F"
+        + id + "%22%20and%20xpath%3D%22%2F%2Fdiv%5B%40class%3D'crossword'%5D%22&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=",
         function (response, status, xhr) {
             data = response.query.results.result;
             console.log(status);
             console.log(response);
             jQ("#box").children().replaceWith(data);
+            crossword_init();
         });
 }
 
+function bindSubmit() {
+    jQ('#submitButton').bind('click', function (e) {
+        var cwId = jQ("#crosswordId").val();
+        getCrossword(cwId);
+        jQ(".crossword").fadeOut("slow");
+    });
+}
 
-jQ(function () {
-    getCrossword(13840)
-});
+//jQ(function () {
+
+//});
 
 /* m-141~js/jquery.cookie.js */
 /**

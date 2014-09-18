@@ -1,4 +1,10 @@
-﻿body
+﻿/* Hide elements of Guardian Crossword */
+
+#article-header, .article-attributes, #crossword-help {
+    display: none;
+}
+
+body
 {
     color: cornflowerblue;
 }
