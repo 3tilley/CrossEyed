@@ -1,9 +1,10 @@
 /* m-141~js/crossword.js */
 var jQ = jQuery.noConflict();
 
-jQ('ready', crossword_init);
-jQ('ready', load_from_cookie);
+//jQ('ready', crossword_init);
+//jQ('ready', load_from_cookie);
 jQ('ready', bindSubmit);
+jQ('ready', getLatestCrosswordId);
 
 var focus_event_fired_during_click = false;
 var active_words = [];
@@ -421,6 +422,18 @@ function check(inputs) {
 	}
 }
 
+//select href from html where url="http://www.theguardian.com/crosswords/series/quick" and xpath="//li[@class='live first']/div/div/h3/a"
+
+function getLatestCrosswordId() {
+    var yqlLatest = "https://query.yahooapis.com/v1/public/yql?q=select%20href%20from%20html%20where%20url%3D%22http%3A%2F%2Fwww.theguardian.com%2Fcrosswords%2Fseries%2Fquick%22%20and%20xpath%3D%22%2F%2Fli%5B%40class%3D'live%20first'%5D%2Fdiv%2Fdiv%2Fh3%2Fa%22&format=json&diagnostics=true&callback="
+    jQ.get(yqlLatest, function (response, status, xhr) {
+        var data = response.query.results.a.href;
+        var splits = data.split("/");
+        var id = splits[splits.length - 1];
+        getCrossword(id);
+    })
+};
+
 //use "http://www.datatables.org/data/htmlstring.xml" as html.tostring; select * from html.tostring where url = "http://www.theguardian.com/crosswords/quick/13840" and xpath="//div[@class='crossword']"
 
 function getCrossword(id) {
@@ -432,7 +445,10 @@ function getCrossword(id) {
             data = response.query.results.result;
             console.log(status);
             console.log(response);
-            jQ("#box").children().replaceWith(data);
+            jQ("#box").hide()
+            jQ("#box").children().remove();
+            jQ("#box").append(data);
+            jQ("#box").fadeIn("slow")
             crossword_init();
         });
 }
@@ -441,7 +457,12 @@ function bindSubmit() {
     jQ('#submitButton').bind('click', function (e) {
         var cwId = jQ("#crosswordId").val();
         getCrossword(cwId);
-        jQ(".crossword").fadeOut("slow");
+        jQ("#box").fadeOut("slow");
+    });
+    jQ("#crosswordId").bind('keyup', 'return', function (e) {
+        var cwId = jQ("#crosswordId").val();
+        getCrossword(cwId);
+        jQ("#box").fadeOut("slow");
     });
 }
 

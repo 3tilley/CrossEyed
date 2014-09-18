@@ -1,7 +1,11 @@
 ﻿/* Hide elements of Guardian Crossword */
 
-#article-header, .article-attributes, #crossword-help {
+#stand-first, .article-attributes, #crossword-help {
     display: none;
+}
+
+#loading {
+    margin: 30px;
 }
 
 body
