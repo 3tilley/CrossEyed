@@ -99,7 +99,9 @@ function crossword_init() {
 	});
 	inputs.bind('keyup', 'backspace', function(e) {
 		copyChangeToIntersectingLetter(jQ(e.target));
-		focusOnPreviousInput(jQ(e.target));
+		if (jQ(e.target).val() == "") {
+		    focusOnPreviousInput(jQ(e.target));
+		};
 		check_complete_for_letter(jQ(e.target));
 	});
 	inputs.bind('keyup', 'del', function(e) {
@@ -112,6 +114,12 @@ function crossword_init() {
 		copyChangeToIntersectingLetter(jQ(e.target));
 		// Capture action to IE clearing the entire crossword
 		return false;
+	});
+	inputs.bind('keyup', 'return', function (e) {
+	    jQuery.each(active_words, function () {
+	        check(this.find('input'));
+	    });
+	    check_complete(all_words);
 	});
 
 	function move_back(e, direction) {
@@ -162,7 +170,8 @@ function crossword_init() {
 
 	jQ('#cheat').bind('click', function(e) {
 		jQuery.each(active_words, function () {
-			populate_solution_for(this.find('input'));
+		    populate_solution_for(this.find('input'));
+		    check(this.find('input'));
 		});
 		check_complete(all_words);
 	});
@@ -305,6 +314,13 @@ function copyChangeToIntersectingLetter(letter) {
 	}
 }
 
+function addClassToIntersectingLetter(letter, className) {
+    var intersect = getIntersectingLetter(letter);
+    if (intersect) {
+        intersect.parent().addClass(className);
+    }
+}
+
 function clue_for(word) {
 	return jQ('#' + word.attr('id') + '-clue');
 }
@@ -414,8 +430,14 @@ function check(inputs) {
 		if (square.val().toLowerCase() != solutions[square.attr('id')].toLowerCase()) {
 		    square.val('');
 		    wordCorrect = false;
-			copyChangeToIntersectingLetter(square);
+		    copyChangeToIntersectingLetter(square);
+		    //square.parent().style('background-color', 'red');
+		    //square.parent().animate({ backgroundColor: 'white' }, 'slow');
 		}
+		else {
+		    square.parent().addClass("checked");
+		    addClassToIntersectingLetter(square, "checked");
+		};
 	});
 	if (wordCorrect) {
 	    clue_for(inputs.prevObject).addClass('complete');
